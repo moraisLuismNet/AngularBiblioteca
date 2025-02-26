@@ -1,0 +1,91 @@
+<div class="container my-2 px-2">
+  <div class="row mt-4">
+    <div class="col-4">
+      <h1>Agregar Autor</h1>
+      <form #formulario="ngForm" (submit)="guardar()">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            name="nombre"
+            [(ngModel)]="autor.nombreAutor"
+            required
+            #nombre="ngModel"
+            id="nombre"
+            placeholder="Nombre obligatorio"
+          />
+          <span
+            class="form-text text-danger"
+            *ngIf="!nombre.valid && nombre.touched"
+          >
+            Nombre obligatorio
+          </span>
+        </div>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="formulario.invalid"
+        >
+          Aceptar
+        </button>
+        <button
+          type="button"
+          class="btn btn-warning"
+          *ngIf="autor.idAutor !== 0"
+          (click)="cancelarEdicion()"
+        >
+          Cancelar edición
+        </button>
+      </form>
+    </div>
+    <div class="col-8">
+      <p-table
+        [value]="autores"
+        [paginator]="true"
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="{first} de {last} de un total de {totalRecords} autores"
+        [rowsPerPageOptions]="[5, 10]"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nombre</th>
+            <th>Total Libros</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-autor>
+          <tr>
+            <td>{{ autor.nombreAutor }}</td>
+            <td>{{ autor.totalLibros}}</td>
+            <td>
+              <p-button
+                icon="pi pi-pencil"
+                (click)="edit(autor)"
+                styleClass="p-button-rounded p-button-warning"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                (click)="confirmDelete(autor)"
+                styleClass="p-button-rounded p-button-danger"
+                [disabled]="autor.totalLibros > 0"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-confirmDialog></p-confirmDialog>
+      <p-dialog
+        header="Alerta"
+        [(visible)]="visibleError"
+        [style]="{ width: '50vw' }"
+      >
+        <p>
+          {{ mensajeError }}
+        </p>
+      </p-dialog>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,224 @@
+<div class="container my-2 px-2">
+  <div class="row mt-4">
+    <div class="col-3">
+      <h1>Agregar Libro</h1>
+      <form #formulario="ngForm" (submit)="guardar()">
+        <div class="form-group">
+          <label for="descripcion">Título</label>
+          <input
+            type="text"
+            class="form-control"
+            name="descripcion"
+            [(ngModel)]="libro.titulo"
+            required
+            id="descripcion"
+            #descripcion="ngModel"
+            placeholder="Título obligatorio"
+          />
+          <span
+            class="form-text text-danger"
+            *ngIf="!descripcion.valid && descripcion.touched"
+          >
+            Descripción obligatoria
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="paginas">Paginas</label>
+          <input
+            type="number"
+            class="form-control"
+            name="paginas"
+            [(ngModel)]="libro.paginas"
+            required
+            min="0"
+            id="paginas"
+            #paginas="ngModel"
+            placeholder="Paginas obligatorio"
+          />
+          <span
+            class="form-text text-danger"
+            *ngIf="!paginas.valid && paginas.touched"
+          >
+            Paginas obligatorio
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="precio">Precio</label>
+          <input
+            type="number"
+            class="form-control"
+            name="precio"
+            [(ngModel)]="libro.precio"
+            required
+            min="0"
+            id="precio"
+            #precio="ngModel"
+            placeholder="Precio obligatorio"
+          />
+          <span
+            class="form-text text-danger"
+            *ngIf="!precio.valid && precio.touched"
+          >
+            Precio obligatorio
+          </span>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [(ngModel)]="libro.descatalogado"
+            id="descatalogado"
+            name="descatalogado"
+          />
+          <label class="form-check-label" for="descatalogado">
+            Descatalogado
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="editorial">Editorial</label>
+          <select
+            class="form-select"
+            [(ngModel)]="libro.editorialId"
+            name="editorial"
+            required
+            Id="editorial"
+          >
+            <option value="null">Selecciona una Editorial</option>
+            <option
+              *ngFor="let editorial of editoriales"
+              [value]="editorial.idEditorial"
+            >
+              {{ editorial.nombreEditorial }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="autor">Autor</label>
+          <select
+            class="form-select"
+            [(ngModel)]="libro.autorId"
+            name="autor"
+            required
+            Id="autor"
+          >
+            <option value="null">Selecciona un Autor</option>
+            <option *ngFor="let autor of autores" [value]="autor.idAutor">
+              {{ autor.nombreAutor }}
+            </option>
+          </select>
+        </div>
+        <!-- Mostrar el nombre de la imagen seleccionada -->
+        <div class="form-group" *ngIf="libro.fotoNombre">
+          <label for="nombreImagen">Nombre de la imagen seleccionada:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nombreImagen"
+            [(ngModel)]="libro.fotoNombre"
+            name="nombreImagen"
+            readonly
+          />
+        </div>
+        <div class="mt-3">
+          <label for="imagen" class="form-label">Elegir imagen</label>
+          <input
+            class="form-control"
+            type="file"
+            id="imagen"
+            (change)="onChange($event)"
+            accept="image/*"
+            #fileInput
+          />
+        </div>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="onAceptar()"
+          [disabled]="formulario.invalid"
+        >
+          Aceptar
+        </button>
+        <button
+          type="button"
+          class="btn btn-warning"
+          *ngIf="libro.isbn !== 0"
+          (click)="cancelarEdicion()"
+        >
+          Cancelar edición
+        </button>
+      </form>
+    </div>
+    <div class="col-9">
+      <p-table
+        [value]="libros"
+        [paginator]="true"
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="{first} de {last} de un total de {totalRecords} libros"
+        [rowsPerPageOptions]="[5, 10]"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Titulo</th>
+            <th></th>
+            <th>Paginas</th>
+            <th>Precio</th>
+            <th>Desc.</th>
+            <th>Editorial</th>
+            <th>Autor</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-libro>
+          <tr>
+            <td>{{ libro.titulo }}</td>
+            <td><img src="{{ libro.fotoPortada }}" width="80" /></td>
+            <td>{{ libro.paginas }}</td>
+            <td>{{ libro.precio | number : "1.2-2" }} €</td>
+            <td>{{ libro.descatalogado ? "Sí" : "No" }}</td>
+            <td>{{ libro.nombreEditorial }}</td>
+            <td>{{ libro.nombreAutor }}</td>
+            <td></td>
+            <td>
+              <p-button
+                icon="pi pi-pencil"
+                (click)="edit(libro)"
+                styleClass="p-button-rounded p-button-warning"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                (click)="confirmDelete(libro)"
+                styleClass="p-button-rounded p-button-danger"
+              ></p-button>
+              <p-button
+                icon="pi pi-eye"
+                (click)="showImage(libro)"
+                [disabled]="!libro.fotoPortada"
+                styleClass="p-button-rounded p-button-primary"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-confirmDialog></p-confirmDialog>
+      <p-dialog
+        header="Alerta"
+        [(visible)]="visibleError"
+        [style]="{ width: '50vw' }"
+      >
+        <p>
+          {{ mensajeError }}
+        </p>
+      </p-dialog>
+      <p-dialog
+        header="{{ libro.titulo }}"
+        [(visible)]="visibleFoto"
+        [style]="{ width: '30vw' }"
+      >
+        <img [src]="foto" alt="Foto del libro" class="img-fluid" />
+      </p-dialog>
+    </div>
+  </div>
+</div>
