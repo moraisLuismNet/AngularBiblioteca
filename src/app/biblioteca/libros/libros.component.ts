@@ -89,27 +89,27 @@ export class LibrosComponent implements OnInit {
 
     if (file && file.length > 0) {
       this.libro.foto = file[0];
-      this.libro.fotoNombre = file[0].name; // Guardar el nombre del archivo
+      this.libro.fotoNombre = file[0].name;
     }
   }
 
   onAceptar() {
     // Después de procesar el archivo seleccionado, borrar su contenido del input
     this.fileInput.nativeElement.value = '';
-    //this.libro.foto = null; // Limpia la referencia al archivo en el modelo también si es necesario
   }
 
   showImage(libro: ILibro) {
     if (this.visibleFoto && this.libro === libro) {
-      // Si la imagen ya está visible y el mismo libro fue seleccionado, oculta el diálogo.
+      // Si la imagen ya está visible y el mismo libro fue seleccionado, oculta el diálogo
       this.visibleFoto = false;
     } else {
-      // Si es un nuevo libro o el diálogo está oculto, muestra la imagen.
+      // Si es un nuevo libro o el diálogo está oculto, muestra la imagen
       this.libro = libro;
       this.foto = libro.fotoPortada!;
       this.visibleFoto = true;
     }
   }
+
   guardar() {
     if (this.libro.isbn === 0) {
       this.bibliotecaService.addLibro(this.libro).subscribe({
@@ -170,9 +170,12 @@ export class LibrosComponent implements OnInit {
     this.libro = { ...libro };
     this.libro.editorialId = editorialEncontrada?.idEditorial ?? null;
     this.libro.autorId = autorEncontrado?.idAutor ?? null;
+     // Mantener el nombre de la imagen existente
     this.libro.fotoNombre = libro.fotoPortada
       ? this.extraerNombreImagen(libro.fotoPortada)
       : ''; // Extraer nombre si tiene imagen
+       // No establecer this.libro.foto a menos que se seleccione una nueva imagen
+      this.libro.foto = null; // Resetear el archivo al editar
   }
 
   extraerNombreImagen(url: string): string {

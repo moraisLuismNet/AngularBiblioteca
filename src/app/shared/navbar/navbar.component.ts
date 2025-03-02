@@ -16,7 +16,7 @@ export class NavbarComponent {
   }
 
   cerrarSesion() {
-    localStorage.removeItem('usuario');
+    sessionStorage.removeItem('usuario');
     this.router.navigateByUrl('/login');
   }
 }

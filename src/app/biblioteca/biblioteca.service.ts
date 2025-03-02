@@ -14,7 +14,7 @@ export class BibliotecaService {
 
   getEditoriales(): Observable<IEditorial[]> {
     const headers = this.getHeaders();
-    return this.http.get<IEditorial[]>(`${this.urlAPI}editoriales`, {
+    return this.http.get<IEditorial[]>(`${this.urlAPI}editoriales/conTotalLibros`, {
       headers,
     });
   }
@@ -46,7 +46,7 @@ export class BibliotecaService {
 
   getAutores(): Observable<IAutor[]> {
     const headers = this.getHeaders();
-    return this.http.get<IAutor[]>(`${this.urlAPI}autores`, {
+    return this.http.get<IAutor[]>(`${this.urlAPI}autores/conTotalLibros`, {
       headers,
     });
   }
@@ -115,7 +115,7 @@ export class BibliotecaService {
     formData.append('editorialId', libro.editorialId?.toString()!);
     formData.append('descatalogado', libro.descatalogado ? 'true' : 'false');
     if (libro.foto) {
-      formData.append('foto', libro.foto);
+      formData.append('foto', libro.foto, libro.foto.name);
     }
 
     return this.http.put<ILibro>(`${this.urlAPI}libros/${libro.isbn}`, formData, { headers: this.getHeaders() });

@@ -5,6 +5,16 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ![AngularBiblioteca](img/2.png)
 ![AngularBiblioteca](img/3.png)
 
+
+## environment
+
+```
+export const environment = {
+  urlAPI: 'https://localhost:7251/api/',
+};
+```
+
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
